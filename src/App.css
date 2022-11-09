@@ -36,3 +36,33 @@
     transform: rotate(360deg);
   }
 }
+
+h2 {
+  color: rgb(0, 83, 128);
+}
+
+input {
+  width: 200px;
+  height: 30px;
+  font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+
+.poster {
+  padding: 5px;
+}
+
+.button {
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 5px;
+  border: 1px solid rgba(0, 0, 0, 0.75);
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 250ms;
+  margin-top: 5px;
+}
