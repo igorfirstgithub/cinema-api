@@ -66,3 +66,7 @@ input {
   transition: background-color 250ms;
   margin-top: 5px;
 }
+
+body {
+  padding: 20px;
+}
