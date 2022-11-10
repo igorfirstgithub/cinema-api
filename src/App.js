@@ -110,9 +110,16 @@ function App() {
         <p>One or both of the names were misspelled</p>
       )}
       <ol>
-        {commonMoviesArray.map((movie) => (
-          <li key={movie.id}>{movie.original_title}</li>
-        ))}
+        {commonMoviesArray
+          .sort((movie1, movie2) => movie1.release_date - movie2.release_date)
+          .map((movie) => (
+            <li key={movie.id}>
+              {movie.original_title +
+                " (" +
+                movie.release_date.slice(0, 4) +
+                ")"}
+            </li>
+          ))}
       </ol>
       {isInfaReady && !commonMoviesArray.length && actorName && actorName2 && (
         <p>No common movies</p>
