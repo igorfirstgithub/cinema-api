@@ -1,17 +1,27 @@
 import { useState } from "react";
 import "./App.css";
+import Movie from "./Movie";
 
 function App() {
-  const [actorName, setActorName] = useState("");
-  const [actorName2, setActorName2] = useState("");
+  const [actorName, setActorName] = useState("Depp");
+  const [actorName2, setActorName2] = useState("Bloom");
   const [myKey] = useState("cfaedb638a5d13a0f766eec3431c2568");
   const [isInfaReady, setIsInfaReady] = useState(false);
   const [commonMoviesArray, setCommonMoviesArray] = useState([]);
   const [actorsArray, setActorsArray] = useState([]);
+  const [actorsPreciseInfo, setActorsPreciseInfo] = useState([]);
+
+  const [actorAdditionalInfo, setActorAdditionalInfo] = useState(null);
+  const [triggerActorAdditionalInfo_0, setTriggerActorAdditionalInfo_0] =
+    useState(false);
+  const [triggerActorAdditionalInfo_1, setTriggerActorAdditionalInfo_1] =
+    useState(false);
 
   async function searchMovie() {
     setCommonMoviesArray([]);
     setActorsArray([]);
+    setActorsPreciseInfo([]);
+    setActorAdditionalInfo(null);
 
     const urlPerson =
       "https://api.themoviedb.org/3/search/person?api_key=cfaedb638a5d13a0f766eec3431c2568&language=en-US&query=";
@@ -29,6 +39,9 @@ function App() {
       return;
     }
 
+    console.log("First actor initial info");
+    console.log(data.results[0]);
+
     setActorsArray([data.results[0]]);
 
     let idActor = data.results[0].id;
@@ -38,6 +51,14 @@ function App() {
     );
     data = await moviesOfActor.json();
     const movies1 = data.cast;
+
+    let actorMoreInfo = await fetch(
+      `https://api.themoviedb.org/3/person/${idActor}?api_key=${myKey}&language=en-US`
+    );
+    data = await actorMoreInfo.json();
+    setActorsPreciseInfo([data]);
+    console.log("First actor more info");
+    console.log(data);
 
     res = await fetch(urlPerson + actorName2);
     data = await res.json();
@@ -55,6 +76,19 @@ function App() {
     );
     data = await moviesOfActor.json();
     const movies2 = data.cast;
+
+    //--
+    actorMoreInfo = await fetch(
+      `https://api.themoviedb.org/3/person/${idActor}?api_key=${myKey}&language=en-US`
+    );
+    data = await actorMoreInfo.json();
+    setActorsPreciseInfo((prevArray) => [...prevArray, data]);
+
+    //--
+    console.log("Second actor more info");
+    console.log(data);
+    console.log("Two actors more info");
+    console.log(actorsPreciseInfo);
 
     const commonMovies = movies1
       .filter(
@@ -81,6 +115,19 @@ function App() {
   function changeQuery2(event) {
     const value = event.target.value;
     setActorName2(value);
+  }
+
+  function actorClickShowInfo(index) {
+    //console.log(actorsPreciseInfo[index]);
+    setActorAdditionalInfo(actorsPreciseInfo[index]);
+
+    if (index === 0) {
+      setTriggerActorAdditionalInfo_0((prevState) => !prevState);
+      setTriggerActorAdditionalInfo_1(false);
+    } else {
+      setTriggerActorAdditionalInfo_1((prevState) => !prevState);
+      setTriggerActorAdditionalInfo_0(false);
+    }
   }
 
   return (
@@ -134,24 +181,29 @@ function App() {
           return acc;
         }, "")}
       </p>
-      <div>
-        {actorsArray.map((actor) => (
-          <img
-            className="poster"
-            key={actor.id}
-            src={"https://image.tmdb.org/t/p/w185/" + actor.profile_path}
-            alt={"picture" + actor.id}
-          />
-        ))}
+      <div className="actors-block">
+        <div className="actors-posters">
+          {actorsArray.map((actor, index) => (
+            <img
+              onClick={() => actorClickShowInfo(index)}
+              className="poster"
+              key={actor.id}
+              src={"https://image.tmdb.org/t/p/w185/" + actor.profile_path}
+              alt={"picture" + actor.id}
+            />
+          ))}
+        </div>
+        {isInfaReady &&
+          (triggerActorAdditionalInfo_0 || triggerActorAdditionalInfo_1) && (
+            <div className="actor-info">
+              <h5>{actorAdditionalInfo.name}</h5>
+              <p>{actorAdditionalInfo.birthday}</p>
+            </div>
+          )}
       </div>
-      <div>
+      <div className="movies-gallery">
         {commonMoviesArray.map((movie) => (
-          <img
-            className="poster"
-            key={movie.id}
-            src={"https://image.tmdb.org/t/p/w185" + movie.poster_path}
-            alt={"picture " + movie.id}
-          />
+          <Movie movie={movie} key={movie.id} />
         ))}
       </div>
     </div>
