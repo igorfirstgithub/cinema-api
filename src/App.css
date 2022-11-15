@@ -51,10 +51,6 @@ input {
   border: 1px solid black;
 }
 
-.poster {
-  padding: 5px;
-}
-
 .button {
   background-color: rgba(0, 0, 0, 0.75);
   color: white;
@@ -71,9 +67,13 @@ body {
   padding: 20px;
 }
 
+.actor-poster {
+  padding: 5px;
+}
+
 .movie-poster {
-  width: 300px;
-  margin: auto;
+  width: 200px;
+  /* margin: auto; */
   margin-top: 30px;
 }
 
@@ -93,7 +93,7 @@ p {
 .movies-gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
   overflow-x: auto;
   margin-top: 30px;
 }
@@ -108,4 +108,34 @@ p {
 
 .actors-info {
   width: 300px;
+}
+
+.whole-page {
+  display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    overflow-x: auto;
+    margin-top: 30px;
+}
+
+.searching-block {
+  width: 300px;
+  border: 1px solid black;
+  padding: 5px;
+}
+
+.all-found-posters {
+  width: 650px;
+  border: 1px solid black;
+    padding: 5px;
+}
+
+.details-actor-or-movie {
+  width: 500px;
+  border: 1px solid black;
+    padding: 5px;
+}
+
+.poster:hover {
+  cursor: pointer;
 }

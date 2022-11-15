@@ -16,6 +16,9 @@ function App() {
     useState(false);
   const [triggerActorAdditionalInfo_1, setTriggerActorAdditionalInfo_1] =
     useState(false);
+  const [movieAdditionalInfo, setMovieAdditionalInfo] = useState(null);
+  const [isMovieAddInfoAllowedToShow, setIsMovieAddInfoAllowedToShow] =
+    useState(false);
 
   async function searchMovie() {
     setCommonMoviesArray([]);
@@ -130,81 +133,116 @@ function App() {
     }
   }
 
+  function showInfoAboutMovie(index) {
+    setMovieAdditionalInfo(commonMoviesArray[index]);
+    console.log("Show a certain movie info");
+    console.log(commonMoviesArray[index]);
+    console.log("Show movie info from state");
+    console.log(movieAdditionalInfo);
+    setIsMovieAddInfoAllowedToShow(true);
+  }
+
   return (
-    <div>
-      <h2>Searching common movies of two actors</h2>
-      <h4>(Provided by TMDB movie API)</h4>
-      <input
-        placeholder="Enter the name of a 1st actor"
-        value={actorName}
-        onChange={changeQuery}
-      />{" "}
-      <br />
-      <input
-        placeholder="Enter the name of a 2nd actor"
-        value={actorName2}
-        onChange={changeQuery2}
-      />{" "}
-      <br />
-      <button
-        className="button"
-        disabled={!actorName.length || !actorName2.length}
-        onClick={searchMovie}
-      >
-        Search common movies
-      </button>
-      {isInfaReady && actorsArray.length < 2 && actorName && actorName2 && (
-        <p>One or both of the names were misspelled</p>
-      )}
-      <ol>
-        {commonMoviesArray
-          .sort((movie1, movie2) => movie1.release_date - movie2.release_date)
-          .map((movie) => (
-            <li key={movie.id}>
-              {movie.original_title +
-                " (" +
-                movie.release_date.slice(0, 4) +
-                ")"}
-            </li>
-          ))}
-      </ol>
-      {isInfaReady && !commonMoviesArray.length && actorName && actorName2 && (
-        <p>No common movies</p>
-      )}
-      <p>
-        {actorsArray.reduce((acc, actor, index) => {
-          if (index) {
-            acc += " and " + actor.name;
-          } else {
-            acc += actor.name;
-          }
-          return acc;
-        }, "")}
-      </p>
-      <div className="actors-block">
-        <div className="actors-posters">
-          {actorsArray.map((actor, index) => (
-            <img
-              onClick={() => actorClickShowInfo(index)}
-              className="poster"
-              key={actor.id}
-              src={"https://image.tmdb.org/t/p/w185/" + actor.profile_path}
-              alt={"picture" + actor.id}
+    <div className="whole-page">
+      <div className="searching-block">
+        <h2>Searching common movies of two actors</h2>
+        <h4>(Provided by TMDB movie API)</h4>
+        <input
+          placeholder="Enter the name of a 1st actor"
+          value={actorName}
+          onChange={changeQuery}
+        />{" "}
+        <br />
+        <input
+          placeholder="Enter the name of a 2nd actor"
+          value={actorName2}
+          onChange={changeQuery2}
+        />{" "}
+        <br />
+        <button
+          className="button"
+          disabled={!actorName.length || !actorName2.length}
+          onClick={searchMovie}
+        >
+          Search common movies
+        </button>
+        {isInfaReady && actorsArray.length < 2 && actorName && actorName2 && (
+          <p>One or both of the names were misspelled</p>
+        )}
+        <ol>
+          {commonMoviesArray
+            .sort((movie1, movie2) => movie1.release_date - movie2.release_date)
+            .map((movie) => (
+              <li key={movie.id}>
+                {movie.original_title +
+                  " (" +
+                  movie.release_date.slice(0, 4) +
+                  ")"}
+              </li>
+            ))}
+        </ol>
+        {isInfaReady &&
+          !commonMoviesArray.length &&
+          actorName &&
+          actorName2 && <p>No common movies</p>}
+      </div>
+      <div className="all-found-posters">
+        <p>
+          {actorsArray.reduce((acc, actor, index) => {
+            if (index) {
+              acc += " and " + actor.name;
+            } else {
+              acc += actor.name;
+            }
+            return acc;
+          }, "")}
+        </p>
+        <div className="actors-block">
+          <div className="actors-posters">
+            {actorsArray.map((actor, index) => (
+              <img
+                onClick={() => actorClickShowInfo(index)}
+                className="poster actor-poster"
+                key={actor.id}
+                src={"https://image.tmdb.org/t/p/w185/" + actor.profile_path}
+                alt={"picture" + actor.id}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="movies-gallery">
+          {commonMoviesArray.map((movie, index) => (
+            <Movie
+              movie={movie}
+              key={movie.id}
+              selectPoster={() => showInfoAboutMovie(index)}
             />
           ))}
         </div>
+      </div>
+      <div className="details-actor-or-movie">
         {isInfaReady &&
           (triggerActorAdditionalInfo_0 || triggerActorAdditionalInfo_1) && (
             <div className="actor-info">
               <h5>{actorAdditionalInfo.name}</h5>
               <p>{actorAdditionalInfo.birthday}</p>
+              <p>{actorAdditionalInfo.biography}</p>
             </div>
           )}
-      </div>
-      <div className="movies-gallery">
-        {commonMoviesArray.map((movie) => (
-          <Movie movie={movie} key={movie.id} />
-        ))}
+        {isMovieAddInfoAllowedToShow && (
+          <div>
+            <h6>{movieAdditionalInfo.original_title}</h6>
+            <img
+              style={{ marginTop: "10px" }}
+              src={
+                "https://image.tmdb.org/t/p/w185" +
+                movieAdditionalInfo.poster_path
+              }
+              alt={"picture " + movieAdditionalInfo.id}
+            />
+            <p>{movieAdditionalInfo.overview}</p>
+          </div>
+        )}
       </div>
     </div>
   );
