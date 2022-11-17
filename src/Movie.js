@@ -7,10 +7,16 @@ export default function Movie(props) {
   //   setDetailsTrigger((prevState) => !prevState);
   // }
   return (
-    <div className="poster movie-poster">
+    <div id="current-movie-poster" className="poster movie-poster">
       <img
         //onClick={showDetails}
-        onClick={() => props.selectPoster()}
+        onClick={() => {
+          props.selectPoster();
+          console.log("Postion of movie poster");
+          console.log(
+            document.getElementById("current-movie-poster").offsetLeft
+          );
+        }}
         src={"https://image.tmdb.org/t/p/w185" + props.movie.poster_path}
         alt={"picture " + props.movie.id}
       />

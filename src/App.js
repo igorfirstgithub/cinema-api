@@ -16,6 +16,7 @@ function App() {
     useState(false);
   const [triggerActorAdditionalInfo_1, setTriggerActorAdditionalInfo_1] =
     useState(false);
+  //const [triggerMovieAdditionalInfo, setTtriggerMovieAdditionalInfo] = useState(false);
   const [movieAdditionalInfo, setMovieAdditionalInfo] = useState(null);
   const [isMovieAddInfoAllowedToShow, setIsMovieAddInfoAllowedToShow] =
     useState(false);
@@ -25,6 +26,11 @@ function App() {
     setActorsArray([]);
     setActorsPreciseInfo([]);
     setActorAdditionalInfo(null);
+    setMovieAdditionalInfo(null);
+    setIsMovieAddInfoAllowedToShow(false);
+    setIsInfaReady(false);
+    setTriggerActorAdditionalInfo_0(false);
+    setTriggerActorAdditionalInfo_1(false);
 
     const urlPerson =
       "https://api.themoviedb.org/3/search/person?api_key=cfaedb638a5d13a0f766eec3431c2568&language=en-US&query=";
@@ -59,6 +65,12 @@ function App() {
       `https://api.themoviedb.org/3/person/${idActor}?api_key=${myKey}&language=en-US`
     );
     data = await actorMoreInfo.json();
+    const additionalActorPhoto_0 = await fetch(
+      `https://api.themoviedb.org/3/person/${idActor}/images?api_key=${myKey}`
+    );
+    const additionalActorPhotoJson_0 = await additionalActorPhoto_0.json();
+    data.secondPhoto = additionalActorPhotoJson_0.profiles[1].file_path;
+
     setActorsPreciseInfo([data]);
     console.log("First actor more info");
     console.log(data);
@@ -85,6 +97,11 @@ function App() {
       `https://api.themoviedb.org/3/person/${idActor}?api_key=${myKey}&language=en-US`
     );
     data = await actorMoreInfo.json();
+    const additionalActorPhoto_1 = await fetch(
+      `https://api.themoviedb.org/3/person/${idActor}/images?api_key=${myKey}`
+    );
+    const additionalActorPhotoJson_1 = await additionalActorPhoto_1.json();
+    data.secondPhoto = additionalActorPhotoJson_1.profiles[1].file_path;
     setActorsPreciseInfo((prevArray) => [...prevArray, data]);
 
     //--
@@ -123,6 +140,7 @@ function App() {
   function actorClickShowInfo(index) {
     //console.log(actorsPreciseInfo[index]);
     setActorAdditionalInfo(actorsPreciseInfo[index]);
+    setIsMovieAddInfoAllowedToShow(false);
 
     if (index === 0) {
       setTriggerActorAdditionalInfo_0((prevState) => !prevState);
@@ -140,6 +158,9 @@ function App() {
     console.log("Show movie info from state");
     console.log(movieAdditionalInfo);
     setIsMovieAddInfoAllowedToShow(true);
+    setTriggerActorAdditionalInfo_0(false);
+    setTriggerActorAdditionalInfo_1(false);
+    window.scrollTo(0, 0);
   }
 
   return (
@@ -187,7 +208,7 @@ function App() {
           actorName2 && <p>No common movies</p>}
       </div>
       <div className="all-found-posters">
-        <p>
+        {/* <p>
           {actorsArray.reduce((acc, actor, index) => {
             if (index) {
               acc += " and " + actor.name;
@@ -196,17 +217,20 @@ function App() {
             }
             return acc;
           }, "")}
-        </p>
+        </p> */}
         <div className="actors-block">
           <div className="actors-posters">
             {actorsArray.map((actor, index) => (
-              <img
-                onClick={() => actorClickShowInfo(index)}
-                className="poster actor-poster"
-                key={actor.id}
-                src={"https://image.tmdb.org/t/p/w185/" + actor.profile_path}
-                alt={"picture" + actor.id}
-              />
+              <div>
+                <h3 className="actor-poster">{actor.name}</h3>
+                <img
+                  onClick={() => actorClickShowInfo(index)}
+                  className="poster actor-poster"
+                  key={actor.id}
+                  src={"https://image.tmdb.org/t/p/w185/" + actor.profile_path}
+                  alt={"picture" + actor.id}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -216,15 +240,24 @@ function App() {
               movie={movie}
               key={movie.id}
               selectPoster={() => showInfoAboutMovie(index)}
+              //showMovieAdditionalInfo={showMovieAdditionalInfo}
             />
           ))}
         </div>
       </div>
       <div className="details-actor-or-movie">
+        <h4>Additional info on an actor or movie (click on a poster)</h4>
         {isInfaReady &&
           (triggerActorAdditionalInfo_0 || triggerActorAdditionalInfo_1) && (
             <div className="actor-info">
-              <h5>{actorAdditionalInfo.name}</h5>
+              <h3>{actorAdditionalInfo.name}</h3>
+              <img
+                src={
+                  "https://image.tmdb.org/t/p/w185" +
+                  actorAdditionalInfo.secondPhoto
+                }
+                alt={actorAdditionalInfo.secondPhoto}
+              />
               <p>{actorAdditionalInfo.birthday}</p>
               <p>{actorAdditionalInfo.biography}</p>
             </div>
