@@ -1,10 +1,19 @@
 import { useState } from "react";
 import "./App.css";
 import Movie from "./Movie";
+import actors from "./actorsList.js";
+import actorsList from "./actorsList.js";
 
 function App() {
-  const [actorName, setActorName] = useState("Depp");
-  const [actorName2, setActorName2] = useState("Bloom");
+  console.log("actors list");
+  console.log(actors);
+
+  const actorsNames = actorsList.map((actor) => actor.name.split(" "));
+  console.log("Only names of all actors");
+  console.log(actorsNames);
+
+  const [actorName, setActorName] = useState("");
+  const [actorName2, setActorName2] = useState("");
   const [myKey] = useState("cfaedb638a5d13a0f766eec3431c2568");
   const [isInfaReady, setIsInfaReady] = useState(false);
   const [commonMoviesArray, setCommonMoviesArray] = useState([]);
@@ -20,6 +29,10 @@ function App() {
   const [movieAdditionalInfo, setMovieAdditionalInfo] = useState(null);
   const [isMovieAddInfoAllowedToShow, setIsMovieAddInfoAllowedToShow] =
     useState(false);
+  const [topOffsetForDetails, setTopOffsetForDetails] = useState(null);
+  const [arraySuggestFilteredNames, setArraySuggestFilteredNames] = useState(
+    []
+  );
 
   async function searchMovie() {
     setCommonMoviesArray([]);
@@ -130,11 +143,30 @@ function App() {
   function changeQuery(event) {
     const value = event.target.value;
     setActorName(value);
+
+    console.log("Filtered names");
+    setArraySuggestFilteredNames(
+      actorsNames.filter((actor) => {
+        if (
+          actor.filter((partName) => partName.slice(0, value.length) === value)
+            .length
+        ) {
+          return true;
+        }
+      })
+    );
   }
 
   function changeQuery2(event) {
     const value = event.target.value;
     setActorName2(value);
+
+    console.log("Filtered names");
+    console.log(
+      actorsNames.filter((actor) => {
+        actor.filter((partName) => partName.slice(0, value.length) === value);
+      })
+    );
   }
 
   function actorClickShowInfo(index) {
@@ -160,7 +192,13 @@ function App() {
     setIsMovieAddInfoAllowedToShow(true);
     setTriggerActorAdditionalInfo_0(false);
     setTriggerActorAdditionalInfo_1(false);
-    window.scrollTo(0, 0);
+    if (index > 2) {
+      setTopOffsetForDetails(Math.floor((index + 3) / 3) * 300);
+    } else {
+      setTopOffsetForDetails(null);
+    }
+
+    //window.scrollTo(0, 0); // very useful in some cases
   }
 
   return (
@@ -187,6 +225,15 @@ function App() {
         >
           Search common movies
         </button>
+        <ul>
+          {arraySuggestFilteredNames.map((fullName) => (
+            <li key={fullName}>
+              {fullName.reduce((acc, part) => {
+                return acc + " " + part;
+              }, "")}
+            </li>
+          ))}
+        </ul>
         {isInfaReady && actorsArray.length < 2 && actorName && actorName2 && (
           <p>One or both of the names were misspelled</p>
         )}
@@ -208,7 +255,7 @@ function App() {
           actorName2 && <p>No common movies</p>}
       </div>
       <div className="all-found-posters">
-        {/* <p>
+        <p>
           {actorsArray.reduce((acc, actor, index) => {
             if (index) {
               acc += " and " + actor.name;
@@ -217,7 +264,7 @@ function App() {
             }
             return acc;
           }, "")}
-        </p> */}
+        </p>
         <div className="actors-block">
           <div className="actors-posters">
             {actorsArray.map((actor, index) => (
@@ -249,7 +296,7 @@ function App() {
         <h4>Additional info on an actor or movie (click on a poster)</h4>
         {isInfaReady &&
           (triggerActorAdditionalInfo_0 || triggerActorAdditionalInfo_1) && (
-            <div className="actor-info">
+            <div className="actor-info add-details">
               <h3>{actorAdditionalInfo.name}</h3>
               <img
                 src={
@@ -263,7 +310,10 @@ function App() {
             </div>
           )}
         {isMovieAddInfoAllowedToShow && (
-          <div>
+          <div
+            style={{ position: "relative", top: topOffsetForDetails }}
+            className="details-movie add-details"
+          >
             <h6>{movieAdditionalInfo.original_title}</h6>
             <img
               style={{ marginTop: "10px" }}
