@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,6 +35,10 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+body {
+  padding-top: 0;
 }
 
 h2 {
@@ -64,7 +68,8 @@ input {
 }
 
 body {
-  padding: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .actor-poster {
@@ -74,7 +79,7 @@ body {
 .movie-poster {
   width: 200px;
   /* margin: auto; */
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 h6 {
@@ -95,7 +100,8 @@ p {
   flex-wrap: wrap;
   gap: 10px;
   overflow-x: auto;
-  margin-top: 30px;
+  margin-top: 10px;
+  max-height: 400px;
 }
 
 .actors-block {
@@ -148,8 +154,16 @@ p {
   cursor: pointer;
 }
 
+h3 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.misspelled-name {
+  color: red;
+}
+
 /* .add-details {
   position: relative;
-  
   top: 200px;
 } */
