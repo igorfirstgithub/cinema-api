@@ -12,9 +12,14 @@ function App() {
   // console.log("Only names of all actors");
   // console.log(actorsNames);
 
-  const [actorsNames] = useState(
-    actorsList.map((actor) => actor.name.split(" "))
-  );
+  // const [actorsNames, setActorsNames] = useState(
+  //   actorsList.map((actor) => actor.name.split(" "))
+  // );
+
+  //const [actorsNames, setActorsNames] = useState([]);
+
+  //console.log(actorsList.map((actor) => actor.name.split(" ")));
+  //console.log(actorsNames);
 
   const [actorName, setActorName] = useState("Ol");
   const [actorName2, setActorName2] = useState("Depp");
@@ -170,69 +175,94 @@ function App() {
     console.log(actorsPreciseInfo);
   }
 
-  function changeQuery(event) {
+  // async function getNameHints(partOfName) {
+  //   const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
+  //   let res = await fetch(urlPerson + partOfName);
+  //   let data = await res.json();
+  //   return data;
+  // }
+
+  async function changeQuery(event) {
     const value = event.target.value;
     setActorName(value);
     setNumberActor(1);
 
-    //console.log("Filtered names");
-    setArraySuggestFilteredNames([
-      ["Select ", "name"],
-      ...actorsNames.filter((actor) => {
-        if (
-          actor.filter((partName) => partName.slice(0, value.length) === value)
-            .length
-        ) {
-          return true;
-        }
-      }),
-    ]);
+    let actorsNames;
 
-    if (!value) {
-      setIsNameMisspelled(false);
+    if (value.length >= 3) {
+      const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
+      let res = await fetch(urlPerson + value);
+      let data = await res.json();
+      console.log(
+        data.results.slice(0, 10).map((actor) => actor.name.split(" "))
+      );
+
+      actorsNames = data.results.slice(0, 10).map((actor) => actor.name);
     }
 
-    // console.log("Filtered names");
-    // setArraySuggestFilteredNames(
-    //   actorsNames.filter((actor) => {
+    if (actorsNames) {
+      setArraySuggestFilteredNames(["Select name", ...actorsNames]);
+    } else {
+      setArraySuggestFilteredNames([value]);
+    }
+
+    // setArraySuggestFilteredNames([
+    //   ["Select ", "name"],
+    //   ...actorsNames.filter((actor) => {
     //     if (
     //       actor.filter((partName) => partName.slice(0, value.length) === value)
     //         .length
     //     ) {
     //       return true;
     //     }
-    //   })
-    // );
-  }
-
-  function changeQuery2(event) {
-    const value = event.target.value;
-    setActorName2(value);
-    setNumberActor(2);
-
-    //console.log("Filtered names");
-    setArraySuggestFilteredNames([
-      ["Select ", "name"],
-      ...actorsNames.filter((actor) => {
-        if (
-          actor.filter((partName) => partName.slice(0, value.length) === value)
-            .length
-        ) {
-          return true;
-        }
-      }),
-    ]);
+    //   }),
+    // ]);
 
     if (!value) {
       setIsNameMisspelled(false);
     }
+  }
 
-    // console.log("Filtered names");
-    // console.log(
-    //   actorsNames.filter((actor) => {
-    //     actor.filter((partName) => partName.slice(0, value.length) === value);
-    //   })
-    // );
+  async function changeQuery2(event) {
+    const value = event.target.value;
+    setActorName2(value);
+    setNumberActor(2);
+
+    let actorsNames;
+
+    if (value.length >= 3) {
+      const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
+      let res = await fetch(urlPerson + value);
+      let data = await res.json();
+      console.log(
+        data.results.slice(0, 10).map((actor) => actor.name.split(" "))
+      );
+
+      actorsNames = data.results.slice(0, 10).map((actor) => actor.name);
+    }
+
+    if (actorsNames) {
+      setArraySuggestFilteredNames(["Select name", ...actorsNames]);
+    } else {
+      setArraySuggestFilteredNames([value]);
+    }
+
+    //console.log("Filtered names");
+    // setArraySuggestFilteredNames([
+    //   ["Select ", "name"],
+    //   ...actorsNames.filter((actor) => {
+    //     if (
+    //       actor.filter((partName) => partName.slice(0, value.length) === value)
+    //         .length
+    //     ) {
+    //       return true;
+    //     }
+    //   }),
+    // ]);
+
+    if (!value) {
+      setIsNameMisspelled(false);
+    }
   }
 
   function actorClickShowInfo(index) {
@@ -312,14 +342,16 @@ function App() {
               {arraySuggestFilteredNames.map((fullName) => (
                 <li
                   onClick={selectActorFromVariants}
-                  value={fullName.reduce((acc, part) => {
-                    return acc + " " + part;
-                  }, "")}
+                  // value={fullName.reduce((acc, part) => {
+                  //   return acc + " " + part;
+                  // }, "")}
+                  value={fullName}
                   key={fullName}
                 >
-                  {fullName.reduce((acc, part) => {
+                  {/* {fullName.reduce((acc, part) => {
                     return acc + " " + part;
-                  }, "")}
+                  }, "")} */}
+                  {fullName}
                 </li>
               ))}
             </ul>
@@ -332,13 +364,15 @@ function App() {
               {arraySuggestFilteredNames.map((fullName) => (
                 <option
                   key={fullName}
-                  value={fullName.reduce((acc, part) => {
-                    return acc + " " + part;
-                  }, "")}
+                  // value={fullName.reduce((acc, part) => {
+                  //   return acc + " " + part;
+                  // }, "")}
+                  value={fullName}
                 >
-                  {fullName.reduce((acc, part) => {
+                  {/* {fullName.reduce((acc, part) => {
                     return acc + " " + part;
-                  }, "")}
+                  }, "")} */}
+                  {fullName}
                 </option>
               ))}
             </select>
@@ -442,7 +476,9 @@ function App() {
                   />
                 )}
                 <p>{actorAdditionalInfo.birthday}</p>
-                <p>{actorAdditionalInfo.biography}</p>
+                <div className="biography">
+                  <p>{actorAdditionalInfo.biography}</p>
+                </div>
               </div>
             )}
           {isMovieAddInfoAllowedToShow && (

@@ -101,7 +101,7 @@ p {
   gap: 10px;
   overflow-x: auto;
   margin-top: 10px;
-  max-height: 400px;
+  max-height: 350px;
 }
 
 .actors-block {
@@ -147,7 +147,8 @@ p {
 .details-actor-or-movie {
   width: 500px;
   border: 1px solid black;
-    padding: 5px;
+  padding: 5px;
+  /* max-height: 700px; */
 }
 
 .poster:hover {
@@ -167,3 +168,8 @@ h3 {
   position: relative;
   top: 200px;
 } */
+
+.biography {
+  overflow-y: scroll;
+  max-height: 270px;
+}
