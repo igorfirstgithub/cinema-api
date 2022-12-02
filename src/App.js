@@ -44,6 +44,8 @@ function App() {
   );
   const [numberActor, setNumberActor] = useState(0);
   const [isNameMisspelled, setIsNameMisspelled] = useState(false);
+  const [isDataListClosed, setIsDataListClosed] = useState(true);
+  const [isDataListClicked, setIsDataListClicked] = useState(false);
 
   // console.log("Actor 1 name length", actorName.length);
   // console.log("Actor 2 name length", actorName2.length);
@@ -187,6 +189,14 @@ function App() {
     setActorName(value);
     setNumberActor(1);
 
+    // if (isDataListClicked) {
+    //   setIsDataListClosed(true);
+    // } else {
+    //   setIsDataListClosed(false);
+    // }
+
+    setIsDataListClosed(false);
+
     let actorsNames;
 
     if (value.length >= 3) {
@@ -205,18 +215,6 @@ function App() {
     } else {
       setArraySuggestFilteredNames([value]);
     }
-
-    // setArraySuggestFilteredNames([
-    //   ["Select ", "name"],
-    //   ...actorsNames.filter((actor) => {
-    //     if (
-    //       actor.filter((partName) => partName.slice(0, value.length) === value)
-    //         .length
-    //     ) {
-    //       return true;
-    //     }
-    //   }),
-    // ]);
 
     if (!value) {
       setIsNameMisspelled(false);
@@ -310,6 +308,11 @@ function App() {
     console.log(event.target.value);
   }
 
+  function closeDataList() {
+    setIsDataListClosed(true);
+    setIsDataListClicked(true);
+  }
+
   return (
     <div className="whole-page">
       <div className="searching-block">
@@ -319,7 +322,15 @@ function App() {
           placeholder="Enter the name of a 1st actor"
           value={actorName}
           onChange={changeQuery}
-        />{" "}
+          list="listid"
+        />
+        {!isDataListClosed && (
+          <datalist onClick={closeDataList} id="listid">
+            {arraySuggestFilteredNames.map((fullName) => (
+              <option value={fullName}>{fullName}</option>
+            ))}
+          </datalist>
+        )}{" "}
         <br />
         <input
           placeholder="Enter the name of a 2nd actor"
