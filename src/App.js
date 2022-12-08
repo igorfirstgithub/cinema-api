@@ -1,28 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 import Movie from "./Movie";
-//import actors from "./actorsList.js";
-import actorsList from "./actorsList.js";
 
 function App() {
-  // console.log("actors list");
-  // console.log(actors);
-
-  // const actorsNames = actorsList.map((actor) => actor.name.split(" "));
-  // console.log("Only names of all actors");
-  // console.log(actorsNames);
-
-  // const [actorsNames, setActorsNames] = useState(
-  //   actorsList.map((actor) => actor.name.split(" "))
-  // );
-
-  //const [actorsNames, setActorsNames] = useState([]);
-
-  //console.log(actorsList.map((actor) => actor.name.split(" ")));
-  //console.log(actorsNames);
-
-  const [actorName, setActorName] = useState("Ol");
-  const [actorName2, setActorName2] = useState("Depp");
+  const [actorName, setActorName] = useState("Laurence Fishburne");
+  const [actorName2, setActorName2] = useState("Keanu Reeves");
   const [myKey] = useState("cfaedb638a5d13a0f766eec3431c2568");
   const [isInfaReady, setIsInfaReady] = useState(false);
   const [commonMoviesArray, setCommonMoviesArray] = useState([]);
@@ -34,22 +16,17 @@ function App() {
     useState(false);
   const [triggerActorAdditionalInfo_1, setTriggerActorAdditionalInfo_1] =
     useState(false);
-  //const [triggerMovieAdditionalInfo, setTtriggerMovieAdditionalInfo] = useState(false);
+
   const [movieAdditionalInfo, setMovieAdditionalInfo] = useState(null);
   const [isMovieAddInfoAllowedToShow, setIsMovieAddInfoAllowedToShow] =
     useState(false);
-  //const [topOffsetForDetails, setTopOffsetForDetails] = useState(null);
+
   const [arraySuggestFilteredNames, setArraySuggestFilteredNames] = useState(
     []
   );
   const [numberActor, setNumberActor] = useState(0);
   const [isNameMisspelled, setIsNameMisspelled] = useState(false);
-  const [isDataListClosed, setIsDataListClosed] = useState(true);
-  const [isDataListClicked, setIsDataListClicked] = useState(false);
-
-  // console.log("Actor 1 name length", actorName.length);
-  // console.log("Actor 2 name length", actorName2.length);
-  // console.log("Number actor", numberActor);
+  const [isDataListOpen, setIsDataListOpen] = useState(false);
 
   async function searchMovie() {
     setCommonMoviesArray([]);
@@ -177,25 +154,16 @@ function App() {
     console.log(actorsPreciseInfo);
   }
 
-  // async function getNameHints(partOfName) {
-  //   const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
-  //   let res = await fetch(urlPerson + partOfName);
-  //   let data = await res.json();
-  //   return data;
-  // }
-
   async function changeQuery(event) {
     const value = event.target.value;
-    setActorName(value);
-    setNumberActor(1);
-
-    // if (isDataListClicked) {
-    //   setIsDataListClosed(true);
-    // } else {
-    //   setIsDataListClosed(false);
-    // }
-
-    setIsDataListClosed(false);
+    const id = event.target.id;
+    if (id === "inputField1") {
+      setActorName(value);
+      setNumberActor(1);
+    } else {
+      setActorName2(value);
+      setNumberActor(2);
+    }
 
     let actorsNames;
 
@@ -207,56 +175,25 @@ function App() {
         data.results.slice(0, 10).map((actor) => actor.name.split(" "))
       );
 
-      actorsNames = data.results.slice(0, 10).map((actor) => actor.name);
+      actorsNames = data.results
+        .slice(0, 10)
+        .map((actor) => actor.name)
+        .filter((elem, index, array) => index === array.lastIndexOf(elem));
+
+      if (actorsNames.length === 1) {
+        setIsDataListOpen(false);
+        console.log("Data list closed, length = ", data.results.length);
+      } else {
+        setIsDataListOpen(true);
+        console.log("Data list opened, length = ", data.results.length);
+      }
     }
 
     if (actorsNames) {
-      setArraySuggestFilteredNames(["Select name", ...actorsNames]);
+      setArraySuggestFilteredNames([...actorsNames]);
     } else {
       setArraySuggestFilteredNames([value]);
     }
-
-    if (!value) {
-      setIsNameMisspelled(false);
-    }
-  }
-
-  async function changeQuery2(event) {
-    const value = event.target.value;
-    setActorName2(value);
-    setNumberActor(2);
-
-    let actorsNames;
-
-    if (value.length >= 3) {
-      const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
-      let res = await fetch(urlPerson + value);
-      let data = await res.json();
-      console.log(
-        data.results.slice(0, 10).map((actor) => actor.name.split(" "))
-      );
-
-      actorsNames = data.results.slice(0, 10).map((actor) => actor.name);
-    }
-
-    if (actorsNames) {
-      setArraySuggestFilteredNames(["Select name", ...actorsNames]);
-    } else {
-      setArraySuggestFilteredNames([value]);
-    }
-
-    //console.log("Filtered names");
-    // setArraySuggestFilteredNames([
-    //   ["Select ", "name"],
-    //   ...actorsNames.filter((actor) => {
-    //     if (
-    //       actor.filter((partName) => partName.slice(0, value.length) === value)
-    //         .length
-    //     ) {
-    //       return true;
-    //     }
-    //   }),
-    // ]);
 
     if (!value) {
       setIsNameMisspelled(false);
@@ -286,13 +223,6 @@ function App() {
     setIsMovieAddInfoAllowedToShow(true);
     setTriggerActorAdditionalInfo_0(false);
     setTriggerActorAdditionalInfo_1(false);
-    // if (index > 2) {
-    //   setTopOffsetForDetails(Math.floor((index + 3) / 3) * 300);
-    // } else {
-    //   setTopOffsetForDetails(null);
-    // }
-
-    //window.scrollTo(0, 0); // very useful in some cases
   }
 
   function selectActorFromVariants(event) {
@@ -308,11 +238,6 @@ function App() {
     console.log(event.target.value);
   }
 
-  function closeDataList() {
-    setIsDataListClosed(true);
-    setIsDataListClicked(true);
-  }
-
   return (
     <div className="whole-page">
       <div className="searching-block">
@@ -320,12 +245,14 @@ function App() {
         <h4>(Provided by TMDB movie API)</h4>
         <input
           placeholder="Enter the name of a 1st actor"
+          id="inputField1"
           value={actorName}
           onChange={changeQuery}
           list="listid"
+          className="input-field"
         />
-        {!isDataListClosed && (
-          <datalist onClick={closeDataList} id="listid">
+        {isDataListOpen && (
+          <datalist id="listid">
             {arraySuggestFilteredNames.map((fullName) => (
               <option value={fullName}>{fullName}</option>
             ))}
@@ -334,10 +261,26 @@ function App() {
         <br />
         <input
           placeholder="Enter the name of a 2nd actor"
+          id="inputField2"
+          value={actorName2}
+          onChange={changeQuery}
+          list="listid2"
+          className="input-field"
+        />
+        {isDataListOpen && (
+          <datalist id="listid2">
+            {arraySuggestFilteredNames.map((fullName) => (
+              <option value={fullName}>{fullName}</option>
+            ))}
+          </datalist>
+        )}{" "}
+        <br />
+        {/* <input
+          placeholder="Enter the name of a 2nd actor"
           value={actorName2}
           onChange={changeQuery2}
         />{" "}
-        <br />
+        <br /> */}
         <button
           className="button"
           disabled={!actorName.length || !actorName2.length}
@@ -346,49 +289,7 @@ function App() {
           Search common movies
         </button>
         <br />
-        {((actorName && numberActor === 1) ||
-          (actorName2 && numberActor === 2)) && (
-          <div>
-            <ul>
-              {arraySuggestFilteredNames.map((fullName) => (
-                <li
-                  onClick={selectActorFromVariants}
-                  // value={fullName.reduce((acc, part) => {
-                  //   return acc + " " + part;
-                  // }, "")}
-                  value={fullName}
-                  key={fullName}
-                >
-                  {/* {fullName.reduce((acc, part) => {
-                    return acc + " " + part;
-                  }, "")} */}
-                  {fullName}
-                </li>
-              ))}
-            </ul>
-            <select
-              // id="name-selector"
-              onChange={selectActorFromVariants}
-              //onSelect={() => console.log("Selector on Select")}
-              //onChange={() => console.log("Selector on Change")}
-            >
-              {arraySuggestFilteredNames.map((fullName) => (
-                <option
-                  key={fullName}
-                  // value={fullName.reduce((acc, part) => {
-                  //   return acc + " " + part;
-                  // }, "")}
-                  value={fullName}
-                >
-                  {/* {fullName.reduce((acc, part) => {
-                    return acc + " " + part;
-                  }, "")} */}
-                  {fullName}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        {/* {Here was a big unorded list} */}
         {isNameMisspelled && actorsArray.length === 0 && (
           <p className="misspelled-name">
             At least the first name is misspelled
@@ -397,7 +298,7 @@ function App() {
         {isNameMisspelled && actorsArray.length === 1 && (
           <p className="misspelled-name">The second name is misspelled</p>
         )}
-        <ol>
+        <ol className="common-movies">
           {commonMoviesArray
             .sort((movie1, movie2) => movie1.release_date - movie2.release_date)
             .map((movie) => (
@@ -430,7 +331,7 @@ function App() {
             <div className="actors-posters">
               {actorsArray.map((actor, index) => (
                 <div>
-                  <h3 className="actor-poster">
+                  <h3 className="actor-poster actor-name">
                     {actor.name ? actor.name : "No such an actor"}
                   </h3>
                   <img
@@ -463,7 +364,9 @@ function App() {
       )}
       {actorsArray.length === 2 && (
         <div className="details-actor-or-movie">
-          <h4>Additional info on an actor or movie (click on a poster)</h4>
+          <h4 className="title-details">
+            Additional info on an actor or movie (click on a poster)
+          </h4>
           {isInfaReady &&
             (triggerActorAdditionalInfo_0 || triggerActorAdditionalInfo_1) && (
               <div className="actor-info add-details">

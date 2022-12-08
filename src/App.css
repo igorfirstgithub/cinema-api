@@ -73,17 +73,22 @@ body {
 }
 
 .actor-poster {
-  padding: 5px;
+  /* padding: 5px; */
+}
+
+.actor-name {
+  text-align: center;
 }
 
 .movie-poster {
-  width: 200px;
+  /* width: 200px; */
   /* margin: auto; */
   margin-top: 10px;
 }
 
 h6 {
-  width: 200px;
+  width: 185px;
+  /* width: 200px; */
   /* color: green; */
   font-size: medium;
   margin-bottom: -5px;
@@ -98,19 +103,19 @@ p {
 .movies-gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  overflow-x: auto;
+  gap: 20px;
+  overflow-y: auto;
   margin-top: 10px;
-  max-height: 350px;
+  max-height: 380px;
 }
 
-.actors-block {
-  display: flex;
+ .actors-block {
+  /* display: flex;
   flex-wrap: nowrap;
   gap: 20px;
-  overflow-x: auto;
-  /* margin-top: 30px; */
-}
+  overflow-x: auto; */
+  
+} 
 
 .actors-posters {
   display: flex;
@@ -118,6 +123,7 @@ p {
   gap: 20px;
   overflow-x: auto;
   /* margin-top: 30px; */
+  justify-content: center;
 }
 
 .actors-info {
@@ -126,28 +132,31 @@ p {
 
 .whole-page {
   display: flex;
-    flex-wrap: nowrap;
-    gap: 20px;
-    overflow-x: auto;
-    margin-top: 30px;
+  flex-wrap: nowrap;
+  gap: 20px;
+  overflow-x: auto;
+  margin-top: 10px;
+  height: 720px;
 }
 
 .searching-block {
-  width: 300px;
+  width: 250px;
   border: 1px solid black;
-  padding: 5px;
+  padding: 10px;
 }
 
 .all-found-posters {
   width: 650px;
   border: 1px solid black;
-    padding: 5px;
+  padding: 5px;
+  padding-left: 10px;
 }
 
 .details-actor-or-movie {
   width: 500px;
   border: 1px solid black;
   padding: 5px;
+  padding-left: 10px;
   /* max-height: 700px; */
 }
 
@@ -170,6 +179,20 @@ h3 {
 } */
 
 .biography {
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 270px;
+}
+
+.input-field {
+  width: 220px;
+}
+
+.common-movies {
+  overflow-y: auto;
+  max-height: 400px;
+  padding-left: 30px;
+}
+
+.title-details {
+  margin-top: 5px;
 }
