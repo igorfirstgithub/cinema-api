@@ -302,7 +302,7 @@ function App() {
         <h2>Searching common movies of two actors</h2>
         <h4>(Provided by TMDB movie API)</h4>
         <input
-          placeholder="Enter the name of a 1st actor"
+          placeholder="Enter the name of a first actor"
           id="inputField1"
           value={actorName}
           onChange={changeQuery}
