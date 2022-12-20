@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Movie from "./Movie";
 
 function App() {
-  const [actorName, setActorName] = useState("Laurence Fishburne");
-  const [actorName2, setActorName2] = useState("Keanu Reeves");
+  const [actorName, setActorName] = useState("");
+  const [actorName2, setActorName2] = useState("");
   const [myKey] = useState("cfaedb638a5d13a0f766eec3431c2568");
   const [isInfaReady, setIsInfaReady] = useState(false);
   const [commonMoviesArray, setCommonMoviesArray] = useState([]);
@@ -27,6 +27,65 @@ function App() {
   const [numberActor, setNumberActor] = useState(0);
   const [isNameMisspelled, setIsNameMisspelled] = useState(false);
   const [isDataListOpen, setIsDataListOpen] = useState(false);
+  //const [temporalStorageApiData, setTemporalStorageApiData] = useState();
+
+  useEffect(() => {
+    const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
+    const value = numberActor === 1 ? actorName : actorName2;
+
+    console.log(`Use effect actor name ${numberActor} - ` + value);
+
+    async function sendDataRequest() {
+      let res = await fetch(urlPerson + value);
+      let data = await res.json();
+      //setTemporalStorageApiData(data);
+      console.log("Use effect get data", data);
+      //----
+      //const data = temporalStorageApiData;
+      let actorsNames;
+
+      if (data) {
+        actorsNames = data.results
+
+          .slice(0, 10)
+          .map((actor) => actor.name)
+          .filter((elem, index, array) => index === array.lastIndexOf(elem)) //exclude duplicates
+          .filter((elem) => elem.includes(value)); // Bill Murray !== Billy Murray
+
+        console.log("Actors names array after slice and map", actorsNames);
+
+        if (actorsNames.length === 1) {
+          if (actorsNames[0].length === value.length) {
+            setIsDataListOpen(false);
+            console.log("Data list closed, length = ", actorsNames.length);
+          } else {
+            setIsDataListOpen(true); // Arnold S is the unique part of the name Arnold Schwarzenegger
+            console.log("Data list open, length = ", actorsNames.length);
+          }
+        } else {
+          setIsDataListOpen(true);
+          console.log("Data list opened, length = ", actorsNames.length);
+        }
+      }
+
+      if (actorsNames) {
+        setArraySuggestFilteredNames([...actorsNames]);
+      } else {
+        setArraySuggestFilteredNames([value]);
+      }
+      //----
+    }
+
+    let delayDebounceFn;
+    if (value.length >= 3) {
+      delayDebounceFn = setTimeout(() => {
+        console.log(value);
+        sendDataRequest();
+      }, 1000);
+    }
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [actorName, actorName2]);
 
   async function searchMovie() {
     setCommonMoviesArray([]);
@@ -146,7 +205,7 @@ function App() {
     }
 
     setIsInfaReady(true);
-    setNumberActor(0);
+    //setNumberActor(0);
 
     console.log("Actors array");
     console.log(actorsArray);
@@ -164,35 +223,34 @@ function App() {
       setActorName2(value);
       setNumberActor(2);
     }
+    console.log("Change Input Field func - Name = ", value);
 
-    let actorsNames;
+    //let actorsNames; // Put api request into useEffect
 
     if (value.length >= 3) {
-      const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
-      let res = await fetch(urlPerson + value);
-      let data = await res.json();
-      console.log(
-        data.results.slice(0, 10).map((actor) => actor.name.split(" "))
-      );
-
-      actorsNames = data.results
-        .slice(0, 10)
-        .map((actor) => actor.name)
-        .filter((elem, index, array) => index === array.lastIndexOf(elem));
-
-      if (actorsNames.length === 1) {
-        setIsDataListOpen(false);
-        console.log("Data list closed, length = ", data.results.length);
-      } else {
-        setIsDataListOpen(true);
-        console.log("Data list opened, length = ", data.results.length);
-      }
-    }
-
-    if (actorsNames) {
-      setArraySuggestFilteredNames([...actorsNames]);
-    } else {
-      setArraySuggestFilteredNames([value]);
+      // const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
+      // let res = await fetch(urlPerson + value);
+      // let data = await res.json();
+      // const data = temporalStorageApiData;
+      // if (data) {
+      //   actorsNames = data.results
+      //     .slice(0, 10)
+      //     .map((actor) => actor.name)
+      //     .filter((elem, index, array) => index === array.lastIndexOf(elem));
+      //   console.log("Actors names array after slice and map", actorsNames);
+      //   if (actorsNames.length === 1) {
+      //     setIsDataListOpen(false);
+      //     console.log("Data list closed, length = ", data.results.length);
+      //   } else {
+      //     setIsDataListOpen(true);
+      //     console.log("Data list opened, length = ", data.results.length);
+      //   }
+      // }
+      // if (actorsNames) {
+      //   setArraySuggestFilteredNames([...actorsNames]);
+      // } else {
+      //   setArraySuggestFilteredNames([value]);
+      // }
     }
 
     if (!value) {
@@ -225,18 +283,18 @@ function App() {
     setTriggerActorAdditionalInfo_1(false);
   }
 
-  function selectActorFromVariants(event) {
-    console.log("Number actor", numberActor);
-    if (numberActor === 1) {
-      setActorName(event.target.value);
-    } else if (numberActor === 2) {
-      setActorName2(event.target.value);
-    }
+  // function selectActorFromVariants(event) {
+  //   console.log("Number actor", numberActor);
+  //   if (numberActor === 1) {
+  //     setActorName(event.target.value);
+  //   } else if (numberActor === 2) {
+  //     setActorName2(event.target.value);
+  //   }
 
-    // setActorName2(event.target.value);
-    console.log("Selected second name");
-    console.log(event.target.value);
-  }
+  //   // setActorName2(event.target.value);
+  //   console.log("Selected second name");
+  //   console.log(event.target.value);
+  // }
 
   return (
     <div className="whole-page">
@@ -275,12 +333,6 @@ function App() {
           </datalist>
         )}{" "}
         <br />
-        {/* <input
-          placeholder="Enter the name of a 2nd actor"
-          value={actorName2}
-          onChange={changeQuery2}
-        />{" "}
-        <br /> */}
         <button
           className="button"
           disabled={!actorName.length || !actorName2.length}
@@ -289,7 +341,6 @@ function App() {
           Search common movies
         </button>
         <br />
-        {/* {Here was a big unorded list} */}
         {isNameMisspelled && actorsArray.length === 0 && (
           <p className="misspelled-name">
             At least the first name is misspelled
@@ -317,16 +368,6 @@ function App() {
       </div>
       {actorsArray.length === 2 && (
         <div className="all-found-posters">
-          {/* <p>
-          {actorsArray.reduce((acc, actor, index) => {
-            if (index) {
-              acc += " and " + actor.name;
-            } else {
-              acc += actor.name;
-            }
-            return acc;
-          }, "")}
-        </p> */}
           <div className="actors-block">
             <div className="actors-posters">
               {actorsArray.map((actor, index) => (
