@@ -27,7 +27,6 @@ function App() {
   const [numberActor, setNumberActor] = useState(0);
   const [isNameMisspelled, setIsNameMisspelled] = useState(false);
   const [isDataListOpen, setIsDataListOpen] = useState(false);
-  //const [temporalStorageApiData, setTemporalStorageApiData] = useState();
 
   useEffect(() => {
     const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
@@ -38,10 +37,9 @@ function App() {
     async function sendDataRequest() {
       let res = await fetch(urlPerson + value);
       let data = await res.json();
-      //setTemporalStorageApiData(data);
+
       console.log("Use effect get data", data);
-      //----
-      //const data = temporalStorageApiData;
+
       let actorsNames;
 
       if (data) {
@@ -50,7 +48,7 @@ function App() {
           .slice(0, 10)
           .map((actor) => actor.name)
           .filter((elem, index, array) => index === array.lastIndexOf(elem)) //exclude duplicates
-          .filter((elem) => elem.includes(value)); // Bill Murray !== Billy Murray
+          .filter((elem) => elem.toLowerCase().includes(value.toLowerCase())); // Bill Murray !== Billy Murray
 
         console.log("Actors names array after slice and map", actorsNames);
 
@@ -73,7 +71,6 @@ function App() {
       } else {
         setArraySuggestFilteredNames([value]);
       }
-      //----
     }
 
     let delayDebounceFn;
@@ -81,7 +78,7 @@ function App() {
       delayDebounceFn = setTimeout(() => {
         console.log(value);
         sendDataRequest();
-      }, 1000);
+      }, 500);
     }
 
     return () => clearTimeout(delayDebounceFn);
@@ -225,34 +222,6 @@ function App() {
     }
     console.log("Change Input Field func - Name = ", value);
 
-    //let actorsNames; // Put api request into useEffect
-
-    if (value.length >= 3) {
-      // const urlPerson = `https://api.themoviedb.org/3/search/person?api_key=${myKey}&language=en-US&query=`;
-      // let res = await fetch(urlPerson + value);
-      // let data = await res.json();
-      // const data = temporalStorageApiData;
-      // if (data) {
-      //   actorsNames = data.results
-      //     .slice(0, 10)
-      //     .map((actor) => actor.name)
-      //     .filter((elem, index, array) => index === array.lastIndexOf(elem));
-      //   console.log("Actors names array after slice and map", actorsNames);
-      //   if (actorsNames.length === 1) {
-      //     setIsDataListOpen(false);
-      //     console.log("Data list closed, length = ", data.results.length);
-      //   } else {
-      //     setIsDataListOpen(true);
-      //     console.log("Data list opened, length = ", data.results.length);
-      //   }
-      // }
-      // if (actorsNames) {
-      //   setArraySuggestFilteredNames([...actorsNames]);
-      // } else {
-      //   setArraySuggestFilteredNames([value]);
-      // }
-    }
-
     if (!value) {
       setIsNameMisspelled(false);
     }
@@ -283,26 +252,13 @@ function App() {
     setTriggerActorAdditionalInfo_1(false);
   }
 
-  // function selectActorFromVariants(event) {
-  //   console.log("Number actor", numberActor);
-  //   if (numberActor === 1) {
-  //     setActorName(event.target.value);
-  //   } else if (numberActor === 2) {
-  //     setActorName2(event.target.value);
-  //   }
-
-  //   // setActorName2(event.target.value);
-  //   console.log("Selected second name");
-  //   console.log(event.target.value);
-  // }
-
   return (
     <div className="whole-page">
       <div className="searching-block">
         <h2>Searching common movies of two actors</h2>
         <h4>(Provided by TMDB movie API)</h4>
         <input
-          placeholder="Enter the name of a first actor"
+          placeholder="Enter the name of a 1st actor"
           id="inputField1"
           value={actorName}
           onChange={changeQuery}
@@ -397,7 +353,6 @@ function App() {
                 movie={movie}
                 key={movie.id}
                 selectPoster={() => showInfoAboutMovie(index)}
-                //showMovieAdditionalInfo={showMovieAdditionalInfo}
               />
             ))}
           </div>
@@ -437,10 +392,7 @@ function App() {
               </div>
             )}
           {isMovieAddInfoAllowedToShow && (
-            <div
-              // style={{ position: "relative", top: topOffsetForDetails }}
-              className="details-movie add-details"
-            >
+            <div className="details-movie add-details">
               <h6>{movieAdditionalInfo.original_title}</h6>
               <img
                 style={{ marginTop: "10px" }}
@@ -460,11 +412,3 @@ function App() {
 }
 
 export default App;
-
-// Different api requests
-
-//const urlMovie = `https://api.themoviedb.org/3/search/movie?api_key=${myKey}&language=en-US&query=${movieTitle}`;
-//const urlMovie = `https://api.themoviedb.org/3/search/movie?api_key=cfaedb638a5d13a0f766eec3431c2568&language=en-US&query=${movieTitle}`;
-//const urlPerson2 = `https://api.themoviedb.org/3/search/person?api_key=cfaedb638a5d13a0f766eec3431c2568&language=en-US&query=${actorName2}`;
-//const urlSean = `https://api.themoviedb.org/3/person/738?api_key=cfaedb638a5d13a0f766eec3431c2568&language=en-US`;
-//const moviesFishburne = `https://api.themoviedb.org/3/person/2975/movie_credits?api_key=cfaedb638a5d13a0f766eec3431c2568&language=en-US`;
