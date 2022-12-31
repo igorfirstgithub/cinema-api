@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import Movie from "./Movie";
+import InputField from "./InputField";
 
 function App() {
   const [actorName, setActorName] = useState("");
@@ -47,7 +48,13 @@ function App() {
 
           .slice(0, 10)
           .map((actor) => actor.name)
-          .filter((elem, index, array) => index === array.lastIndexOf(elem)) //exclude duplicates
+          .filter(
+            (elem, index, array) =>
+              index ===
+              array
+                .map((elem) => elem.toLowerCase())
+                .lastIndexOf(elem.toLowerCase())
+          ) //exclude duplicates, even if they are just in different cases - Lady Gaga !== Lady gaga
           .filter((elem) => elem.toLowerCase().includes(value.toLowerCase())); // Bill Murray !== Billy Murray
 
         console.log("Actors names array after slice and map", actorsNames);
@@ -257,7 +264,28 @@ function App() {
       <div className="searching-block">
         <h2>Searching common movies of two actors</h2>
         <h4>(Provided by TMDB movie API)</h4>
-        <input
+        {/* ******************************************************** */}
+        <InputField
+          placeholder="Enter the name of a 1st actor"
+          id="inputField1"
+          value={actorName}
+          onChange={changeQuery}
+          list="listid"
+          isDataListOpen={isDataListOpen}
+          arraySuggestFilteredNames={arraySuggestFilteredNames}
+        />
+        <br />
+        <InputField
+          placeholder="Enter the name of a 2nd actor"
+          id="inputField2"
+          value={actorName2}
+          onChange={changeQuery}
+          list="listid2"
+          isDataListOpen={isDataListOpen}
+          arraySuggestFilteredNames={arraySuggestFilteredNames}
+        />
+        <br />
+        {/* <input
           placeholder="Enter the name of a 1st actor"
           id="inputField1"
           value={actorName}
@@ -288,7 +316,8 @@ function App() {
             ))}
           </datalist>
         )}{" "}
-        <br />
+        <br /> */}
+        {/* ******************************************************** */}
         <button
           className="button"
           disabled={!actorName.length || !actorName2.length}
